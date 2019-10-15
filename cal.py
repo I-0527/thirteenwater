@@ -48,12 +48,11 @@ def isduizi(**bucket): #对子
     return False
 
 def isthua(**huabucket):  #同花
-    cnt=0
-    for i in huabucket.values():
-        if i>=5:
+
+    for i,j in huabucket.items():
+        if len(j)>=5:
             return True
-        cnt= cnt+1
-    cnt=-1
+
     return False
 
 def isbomb(**bucket):     #炸弹
@@ -100,10 +99,6 @@ def main():
     #分割扑克牌，保存为大小为13的卡牌列表
     card=newdata[4].split("\"")[1].split()
 
-    card=['$10','&5','#8',
-          '*9','&9','#9','$K','$K',
-          '$2','$3','$4','$5','$6'
-          ]
     bucket={'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}    #牌桶记录点数一致牌有多少张
     val = [0,'A','2','3','4','5','6','7','8','9','10','J','Q','K']
     huabucket={'$':[],'&':[],'*':[],'#':[]}    #花色桶记录花色一致的有多少张牌
@@ -117,7 +112,7 @@ def main():
         fbucket[x[1:]] = fbucket[x[1:]] + 1
         huabucket[x[0]].append(x[1:])
     for i in huabucket.keys():
-        smallbucket = bucket
+        smallbucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
         for k in huabucket[i]:
             smallbucket[k] = smallbucket[k] + 1
         f1,f2=isshunzi(**smallbucket)
@@ -144,7 +139,8 @@ def main():
                 j = val.index(f2)
                 for k in range(j-4,j+1,1):
                     newcard.append(i+val[k])
-                    order.remove(i+val[k])
+                for k in range(5):
+                    order.remove(newcard[len(newcard)-1-k])
                 newindex = newindex-5
 
     order=sortCard(order,newindex)
@@ -244,59 +240,59 @@ def main():
             return userid,newcard
         
 
-    print(order)
-    print(newcard)
     order=sortCard(order,newindex)
     fibucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
     for x in order:
         fibucket[x[1:]] = fibucket[x[1:]] + 1
-    if ishulu(**fibucket)==True and flag[0]==1:
+    if ishulu(**fibucket)==True and flag[0]==1:   #葫芦
         flag[2]=1
         arr=[]
         for i,j in fibucket.items():
             if j==3:
-                hua=[]
-                for k in order :
-                    if j==k[1:] :
-                        hua.append(k[0])
+                for k in order:
+                    if k[1:]==i:
+                        newcard.append(k)
+                        newindex = newindex -1
                 for k in range(3):
-                    newcard.append(hua[i]+i)
-                    order.remove(hua[i]+i)
-                    newindex = newindex +1
-            if j==2 :    #aefaf
+                    order.remove(newcard[len(newcard)-k-1])
+            if j==2:
                 arr.append(i)
+
         if flag[0]==1 :    #同花顺葫芦+对子/乌龙   |炸弹葫芦+对子/乌龙
             if len(arr)==1 :  #同花顺葫芦乌龙
                 for i in order:
                     if i[1:]==arr[0]:
                         for k in range(2):
                             newcard.append(i)
-                            order.append(i)
-                            newindex = newindex +1
+                            order.remove(i)
+                            newindex = newindex -1
                 for i in range(3):
                     newcard.append(order[i])
-                    newindex = newindex +1
+                    newindex = newindex -1
+                print('1',newcard)
                 return userid,newcard
             elif  len(arr)>=2: #同花顺葫芦对子
                 if singleCardCompare(val.index(arr[0]),val.index(arr[1]))==1:
                     for i in order:
                         if i[1:]==arr[1]:
                             newcard.append(i)
-                            order.remove(i)
-                            newindex = newindex+1
+                            newindex = newindex - 1
+                    for k in range(2):
+                        order.remove(newcard[len(newcard)-1-k])
                     for i in range(3):
                         newcard.append(order[i])
-                        newindex = newindex +1
+                        newindex = newindex -1
                     return userid, newcard
                 elif singleCardCompare(val.index(arr[0]),val.index(arr[1]))==-1:
                     for i in order:
                         if i[1:]==arr[0]:
                             newcard.append(i)
-                            order.remove(i)
-                            newindex = newindex+1
+                            newindex = newindex - 1
+                    for k in range(2):
+                        order.remove(newcard[len(newcard)-1-k])
                     for i in range(3):
                         newcard.append(order[i])
-                        newindex = newindex +1
+                        newindex = newindex -1
                     return userid, newcard
     elif ishulu(**fibucket)==True and flag[1]==1:     #炸弹葫芦+对子/乌龙
         flag[2]=1
@@ -305,7 +301,7 @@ def main():
              if j==2:
                 arr.append(i)
         order=sortCard(order,newindex)
-        sbucket = bucket
+        sbucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
         for x in order:
             sbucket[x[1:]] = sbucket[x[1:]] + 1
         if len(arr)==3:                             #炸弹葫芦对子
@@ -314,122 +310,132 @@ def main():
                     if i[1:]==arr[1]:
                         newcard.append(i)
                         order.remove(i)
-                        newindex = newindex+1
-                hua=[]
+                        newindex = newindex-1
                 for i,j in sbucket.items():
                     if j==3:
-                        hua.append(i)
-                for k in order :
-                    if j==k[1:] :
-                        hua.append(k[0])
-                for k in range(3):
-                    newcard.append(hua[i]+i)
-                    order.remove(hua[i]+i)
-                    newindex = newindex +1
+                        for k in order:
+                            if k[1:]==i:
+                                newcard.append(k)
+                for i in range(3):
+                    order.remove(newcard[len(newcard)-1-i])
+                    newindex = newindex -1
                 if singleCardCompare(val.index(arr[0]),val.index(arr[2]))==1:
                     for i in order:
                         if i[1:]==arr[2]:
                             newcard.append(i)
-                            order.remove(i)
-                            newindex = newindex +1
-                    for i in order:
-                        newcard.append(i)
-                        order.remove(i)
+                            newindex = newindex -1
+                    for i in range(2):
+                        order.remove(newcard[len(newcard)-1-i])
+                    for i in range(3):
+                        newcard.append(order[i])
+                        newindex = newindex -1
                     return userid,newcard
                 else :
                     for i in order:
                         if i[1:]==arr[0]:
                             newcard.append(i)
-                            order.remove(i)
-                            newindex = newindex +1
-                    for i in order:
-                        newcard.append(i)
-                        order.remove(i)
+                            newindex = newindex -1
+                    for i in range(2):
+                        order.remove(newcard[len(newcard)-1-i])
+                    for i in range(3):
+                        newcard.append(order[i])
+                        newindex = newindex -1
                     return userid,newcard
             elif singleCardCompare(val.index(arr[0]),val.index(arr[1]))==-1:
                 for i in order:
                     if i[1:]==arr[0]:
                         newcard.append(i)
                         order.remove(i)
-                        newindex = newindex+1
-                hua=[]
+                        newindex = newindex-1
                 for i,j in sbucket.items():
                     if j==3:
-                        hua.append(i)
-                for k in order :
-                    if j==k[1:] :
-                        hua.append(k[0])
-                for k in range(3):
-                    newcard.append(hua[i]+i)
-                    order.remove(hua[i]+i)
-                    newindex = newindex +1
+                        for k in order:
+                            if k[1:]==i:
+                                newcard.append(k)
+                for i in range(3):
+                    order.remove(newcard[len(newcard)-1-i])
+                    newindex = newindex -1
                 if singleCardCompare(val.index(arr[1]),val.index(arr[2]))==1:
                     for i in order:
                         if i[1:]==arr[2]:
                             newcard.append(i)
-                            order.remove(i)
-                            newindex = newindex +1
-                    for i in order:
-                        newcard.append(i)
-                        order.remove(i)
+                            newindex = newindex -1
+                    for i in range(2):
+                        order.remove(newcard[len(newcard)-1-i])
+                    for i in range(3):
+                        newcard.append(order[i])
+                        newindex = newindex -1
                     return userid,newcard
                 else :
                     for i in order:
                         if i[1:]==arr[1]:
                             newcard.append(i)
-                            order.remove(i)
-                            newindex = newindex +1
-                    for i in order:
-                        newcard.append(i)
-                        order.remove(i)
+                            newindex = newindex -1
+                    for i in range(2):
+                        order.remove(newcard[len(newcard)-1-i])
+                    for i in range(3):
+                        newcard.append(order[i])
+                        newindex = newindex -1
                     return userid,newcard
-        elif len(arr)==2:
-            for i,j in sbucket.items():
-                if j!=2:
-                    for i in order:
-                        if i[1:]==i:
-                            newcard.append(i)
-                            order.remove(i)
-                            newindex = newindex+1
+        elif len(arr)==2:     #炸弹葫芦对子
+            for i,j in sbucket.items():    #推入一个和炸弹匹配的单牌
+                if j==1:
+                    for k in order:
+                        if k[1:]==i:
+                            newcard.append(k)
+                            order.remove(k)
+                            newindex = newindex-1
                             break
-            hua=[]
-            for i,j in sbucket.items():
+                    if (len(order)==8):
+                        break
+            for i,j in sbucket.items():  #推入葫芦
                 if j==3:
-                    hua.append(i)
-            for k in order :
-                if j==k[1:] :
-                    hua.append(k[0])
-            for k in range(3):
-                newcard.append(hua[i]+i)
-                order.remove(hua[i]+i)
-                newindex = newindex +1
+                    for k in order:
+                        if k[1:]==i:
+                            newcard.append(k)
+            for i in range(3):
+                order.remove(newcard[len(newcard)-1-i])
+                newindex = newindex -1
             if singleCardCompare(val.index(arr[0]),val.index(arr[1]))==1:
                 for i in order:
-                    if i[1:]==arr[1]:
+                    if i[1:]==arr[1]:    #推入和葫芦匹配的对子
                         newcard.append(i)
-                        order.remove(i)
-                        newindex = newindex +1
-                for i in order:
-                    newcard.append(i)
-                    order.remove(i)
+                        newindex = newindex -1
+                for i in range(2):
+                    order.remove(newcard[len(newcard)-1-i])
+                for i in range(3):
+                    newcard.append(order[i])
+                    newindex = newindex -1
                 return userid,newcard
             else:
                 for i in order:
-                    if i[1:]==arr[0]:
+                    if i[1:]==arr[0]:   #推入和葫芦匹配的对子
                         newcard.append(i)
-                        order.remove(i)
-                        newindex = newindex +1
-                for i in order:
-                    newcard.append(i)
-                    order.remove(i)
+                        newindex = newindex -1
+                for i in range(2):
+                    order.remove(newcard[len(newcard)-1-i])
+                print(order)
+                print(newcard)
+                for i in range(3):
+                    newcard.append(order[i])
+                    newindex = newindex -1
                 return userid,newcard
-        elif len(arr)==1:
+            
+        elif len(arr)==1:     #炸弹葫芦乌龙
+            duizi=[]
             for i in order :
                 if i[1:]==arr[0]:
-                    dui=i
-                    order.remove(i)
-                    newindex = newindex +2
-                    break
+                    duizi.append(i)
+            for i in range(2):
+                order.remove(duizi[i])
+            hulu=[]
+            for i,j in sbucket.items():
+                if j==3:
+                    for k in order:
+                        if k[1:]==i:
+                            hulu.append(k)
+            for i in range(3):
+                order.remove(hulu[i])
             order=sortCard(order,4)
             if order[0][1:]!='A':
                 newcard.append(order[0])
@@ -437,65 +443,268 @@ def main():
             else :
                 newcard.append(order[1])
                 order.remove(order[1])
-            hua=[]
-            for i,j in sbucket.items():
-                if j==3:
-                    hua.append(i)
-            for k in order :
-                if j==k[1:] :
-                    hua.append(k[0])
-            for k in range(3):
-                newcard.append(hua[i]+i)
-                order.remove(hua[i]+i)
-                newindex = newindex +1
-            newcard.append(dui)
-            for i in order:
-                newcard.append(i)
-                newindex = newindex +1
+            for i in range(3):   #推入葫芦
+                newcard.append(hulu[i])
+            for i in range(2):   #推入对子
+                newcard.append(duizi[i])
+            for i in range(3):
+                newcard.append(order[i])
             return userid,newcard
+    elif ishulu(**fibucket)==True:  #最高级为葫芦
+        for i,j in fibucket.items():
+            if j==3:
+                for k in order:
+                    if k[1:]==i:
+                        newcard.append(k)
+                break
+        for i in range(3):
+            order.remove(newcard[len(newcard)-1-i])
+            newindex = newindex -1
 
 
     order=sortCard(order,newindex)
-    ubucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
-    uhuabucket = {'$':[],'&':[],'*':[],'#':[]}
+    bucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
+    huabucket = {'$':[],'&':[],'*':[],'#':[]}
     for x in order:
-        ubucket[x[1:]] = ubucket[x[1:]] + 1
-        uhuabucket[x[0]].append(x[1:])
-
-    #print(newcard)        
-            
-        
-                    
-"""        elif len(huabucket[i])>=5:    #同花
-                order=sortCard(order,newindex)     #重新对剩下的牌进行排序
-                tbucket = bucket                       #重新建立点数桶
+        bucket[x[1:]] = bucket[x[1:]] + 1
+        huabucket[x[0]].append(x[1:])
+    if isthua(**huabucket)==True :   
+        flag[3]=1
+        if flag[0]==1:    #同花顺同花乌龙
+            for i,j in huabucket.items():
+                if len(j)>=5:
+                    for k in range(5):
+                        newcard.append(i+j[k])
+                    break
+            for i in range(5):
+                order.remove(newcard[len(newcard)-1-i])
+            for i in range(3):
+                newcard.append(order[i])
+            return userid,newcard
+        elif flag[1]==1:      #炸弹同花+对子/乌龙
+            tonghua=[]
+            for i,j in huabucket.items():
+                if len(j)>=5:
+                    for k in range(5):
+                        tonghua.append(i+j[k])
+                    break
+            for i in range(5):
+                order.remove(tonghua[i])
+            bucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
+            for x in order:
+                bucket[x[1:]] = bucket[x[1:]] + 1
+            arr=[]
+            for i,j in bucket.items():
+                if j>=2:
+                    arr.append(i)
+            if isduizi(**bucket)==True:       #炸弹同花对子
+                if len(arr)==2:
+                    if singleCardCompare(arr[0],arr[1])==1:
+                        for i in order:
+                            if i[1:]==arr[1]:
+                                newcard.append(i)
+                                order.remove(i)
+                                break;
+                        for i in range(5):
+                            newcard.append(tonghua[i])
+                        for i in range(3):
+                            newcard.append(order[i])
+                        return userid,newcard
+                    if singleCardCompare(arr[0],arr[1])==-1:
+                        for i in order:
+                            if i[1:]==arr[0]:
+                                newcard.append(i)
+                                order.remove(i)
+                                break;
+                        for i in range(5):
+                            newcard.append(tonghua[i])
+                        for i in range(3):
+                            newcard.append(order[i])
+                        return userid,newcard
+                elif len(arr)==1:  
+                    duizi=[]
+                    for i in order :
+                        if i[1:]==arr[0]:
+                            duizi.append(i)
+                    for i in range(2):
+                        order.remove(duizi[i])
+                    newcard.append(order[0])
+                    order.append(order[0])
+                    for i in range(5):
+                        newcard.append(tonghua[i])
+                    newcard.append(order[0])
+                    for i in range(2):
+                        newcard.append(duizi[i])
+                    return userid,newcard
+            else:     #炸弹同花乌龙
+                if order[0][1:]=='A':
+                    newcard.append(order[1])
+                    order.remove(order[1])
+                else :
+                    newcard.append(order[0])
+                    order.remove(order[0])
+                for i in range(5):
+                    newcard.append(tonghua[i])
+                for i in range(3):
+                    newcard.append(order[i])
+                return userid,newcard
+        elif ishulu(**bucket)==True:   #葫芦同花+对子/乌龙
+            bucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
+            for x in order:
+                bucket[x[1:]] = bucket[x[1:]] + 1
+            arr=[]
+            for i,j in bucket.items():
+                if j==2:
+                    arr.append(i)
+            if len(arr)>=1:      #葫芦同花乌龙
+                for i in order:
+                    if i[1:]==arr[0]:
+                        newcard.append(i)
+                for i in range(2):
+                    order.remove(newcard[len(newcard)-1-i])
+                bucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
                 for x in order:
-                    tbucket[x[1:]] = tbucket[x[1:]] + 1
-                if isbomb(tbucket)==True:
-                    flag[1]=2
+                    bucket[x[1:]] = bucket[x[1:]] + 1
+                if isthua(bucket)==True:  #可以构成同花
+                    tonghua=[]
+                    for i,j in huabucket.items():
+                        if len(j)>=5:
+                            for k in range(5):
+                                newcard.append(i+j[k])
+                        break
+                    for i in range(5):
+                        order.remove(newcard[len(newcard)-1-i])
+                    for i in range(3):
+                        newcard.append(order[i])
+                    print(newcard)
+                    return userid,newcard
+                else :    #构不成同花
+                    for i in range(8):
+                        newcard.append(order[i])
+                    return uesrid,newcard
+        else:                     #最高级为同花
+            tonghua=[]
+            for i,j in huabucket.items():
+                if len(j)>=5:
+                    for k in range(5):
+                        newcard.append(i+j[k])
                     break
-                elif ishulu(tbucket)==True:
-                    flag[2]=2
-                    break
+            for i in range(5):
+                order.remove(newcard[len(newcard)-1-i])
+            bucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
+            for x in order:
+                bucket[x[1:]] = bucket[x[1:]] + 1
+            f1,f2=isshunzi(**bucket)
+            arr=['10','J','Q','K','A']
+            if f1==True:   #顺子
+                if f2=='A':
+                    for i in range(5):
+                        for k in order:
+                            if k[1:]==arr[5-i]:
+                                newcard.append(k)
+                                break
+                    for i in range(5):
+                        order.remove(newcard[len(newcard)-1-i])
+                        newindex = newindex -1
                 else:
-                    flag[3]=1
-                    arr=[]
-                    for k in range(len(huabucket[i])):
-                        arr.append(val.index(k))
-                    arr.sort()
-                    if(arr[0]==1):
-                        newcard.append(i+"A")
-                        order.remove(i+"A")
-                    else:
-                        newcard.append(i+val[max(arr)])
-                        order.remove(i+val[max(arr)])
-                    for k in range(1,5):
-                        newcard.append(i+val[arr[k]])
-                        order.remove(i+val[arr[k]])
-                    newindex = newindex-5 """
-        
+                    num=val.index(f2)
+                    for i in range(5):
+                        for k in order:
+                            if k[1:]==val[num-i]:
+                                newcard.append(k)
+                                break
+                    for i in range(5):
+                        order.remove(newcard[len(newcard)-1-i])
+                        newindex = newindex -1
+                for i in range(3):
+                    newcard.append(order[i])
+                    return userid,newcard
+            else:
+                duizi=[]
+                brr=[]
+                for i,j in bucket.items():
+                    if j==2:
+                        brr.append(i)
+                if len(brr)==1:
+                    for k in order:
+                        if k[1:]==brr[0]:
+                            newcard.append(k)
+                    for i in range(2):
+                        order.remove(newcard[len(newcard)-1-i])
+                    for i in range(len(order)):
+                        newcard.append(order[i])
+                    return userid,newcard
+                elif len(brr)==2:
+                    for i in range(2):
+                        for k in order:
+                            if k[1:]==brr[i]:
+                                newcard.append(k)
+                    for i in range(4):
+                        order.remove(newcard[len(newcard)-1-i])
+                    for i in range(len(order)):
+                        newcard.append(order[i])
+                    return userid,newcard
 
+        bucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
+        for x in order:
+            bucket[x[1:]] = bucket[x[1:]] + 1
+        f1,f2=isshunzi(**bucket)
+        arr=['10','J','Q','K','A']
+        if f1==True:   #顺子
+            if f2=='A':
+                for i in range(5):
+                    for k in order:
+                        if k[1:]==arr[5-i]:
+                            newcard.append(k)
+                            break
+                for i in range(5):
+                    order.remove(newcard[len(newcard)-1-i])
+                    newindex = newindex -1
+            else:
+                num=val.index(f2)
+                for i in range(5):
+                    for k in order:
+                        if k[1:]==val[num-i]:
+                            newcard.append(k)
+                            break
+                for i in range(5):
+                    order.remove(newcard[len(newcard)-1-i])
+                    newindex = newindex -1
+            for i in range(len(order)):
+                newcard.append(order[i])
+                return userid,newcard
+        else:
+            duizi=[]
+            brr=[]
+            for i,j in bucket.items():
+                if j==2:
+                    brr.append(i)
+            if len(brr)==1:
+                for k in order:
+                    if k[1:]==brr[0]:
+                        newcard.append(k)
+                for i in range(2):
+                    order.remove(newcard[len(newcard)-1-i])
+                for i in range(len(order)):
+                    newcard.append(order[i])
+                return userid,newcard
+            elif len(brr)==2:
+                for i in range(2):
+                    for k in order:
+                        if k[1:]==brr[i]:
+                            newcard.append(k)
+                for i in range(4):
+                    order.remove(newcard[len(newcard)-1-i])
+                for i in range(len(order)):
+                    newcard.append(order[i])
+                return userid,newcard
+
+
+    order=sortCard(card,newindex)
+    return userid,order
+                    
+                
+        
 
 main()
-
 
