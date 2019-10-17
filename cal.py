@@ -414,6 +414,7 @@ def main():
                         newindex = newindex -1
                 for i in range(2):
                     order.remove(newcard[len(newcard)-1-i])
+                    newindex = newindex -1
                 print(order)
                 print(newcard)
                 for i in range(3):
@@ -428,6 +429,7 @@ def main():
                     duizi.append(i)
             for i in range(2):
                 order.remove(duizi[i])
+                newindex = newindex -1
             hulu=[]
             for i,j in sbucket.items():
                 if j==3:
@@ -436,6 +438,7 @@ def main():
                             hulu.append(k)
             for i in range(3):
                 order.remove(hulu[i])
+                newindex = newindex -1
             order=sortCard(order,4)
             if order[0][1:]!='A':
                 newcard.append(order[0])
@@ -443,6 +446,7 @@ def main():
             else :
                 newcard.append(order[1])
                 order.remove(order[1])
+                newindex = newindex -1
             for i in range(3):   #推入葫芦
                 newcard.append(hulu[i])
             for i in range(2):   #推入对子
@@ -478,6 +482,7 @@ def main():
                     break
             for i in range(5):
                 order.remove(newcard[len(newcard)-1-i])
+                newindex = newindex -1
             for i in range(3):
                 newcard.append(order[i])
             return userid,newcard
@@ -528,6 +533,7 @@ def main():
                             duizi.append(i)
                     for i in range(2):
                         order.remove(duizi[i])
+                        newindex = newindex -1
                     newcard.append(order[0])
                     order.append(order[0])
                     for i in range(5):
@@ -543,6 +549,7 @@ def main():
                 else :
                     newcard.append(order[0])
                     order.remove(order[0])
+                    newindex = newindex -1
                 for i in range(5):
                     newcard.append(tonghua[i])
                 for i in range(3):
@@ -562,6 +569,7 @@ def main():
                         newcard.append(i)
                 for i in range(2):
                     order.remove(newcard[len(newcard)-1-i])
+                    newindex = newindex -1
                 bucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
                 for x in order:
                     bucket[x[1:]] = bucket[x[1:]] + 1
@@ -574,6 +582,7 @@ def main():
                         break
                     for i in range(5):
                         order.remove(newcard[len(newcard)-1-i])
+                        newindex = newindex -1
                     for i in range(3):
                         newcard.append(order[i])
                     print(newcard)
@@ -591,6 +600,7 @@ def main():
                     break
             for i in range(5):
                 order.remove(newcard[len(newcard)-1-i])
+                newindex = newindex -1
             bucket = {'A':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,'J':0,'Q':0,'K':0}
             for x in order:
                 bucket[x[1:]] = bucket[x[1:]] + 1
@@ -631,6 +641,7 @@ def main():
                             newcard.append(k)
                     for i in range(2):
                         order.remove(newcard[len(newcard)-1-i])
+                        newindex = newindex -1
                     for i in range(len(order)):
                         newcard.append(order[i])
                     return userid,newcard
@@ -641,6 +652,7 @@ def main():
                                 newcard.append(k)
                     for i in range(4):
                         order.remove(newcard[len(newcard)-1-i])
+                        newindex = newindex -1
                     for i in range(len(order)):
                         newcard.append(order[i])
                     return userid,newcard
@@ -685,6 +697,7 @@ def main():
                         newcard.append(k)
                 for i in range(2):
                     order.remove(newcard[len(newcard)-1-i])
+                    newindex = newindex -1
                 for i in range(len(order)):
                     newcard.append(order[i])
                 return userid,newcard
@@ -695,6 +708,7 @@ def main():
                             newcard.append(k)
                 for i in range(4):
                     order.remove(newcard[len(newcard)-1-i])
+                    newindex = newindex -1
                 for i in range(len(order)):
                     newcard.append(order[i])
                 return userid,newcard

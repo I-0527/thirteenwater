@@ -3,7 +3,10 @@ import http.client
 
 conn = http.client.HTTPSConnection("api.shisanshui.rtxux.xyz")
 
-payload = "{\"username\":\"hhhhhwwww\",\"password\":\"abcde\"}"
+username="hhhhhwwww"
+password="abcde"
+payload = "{\"username\":\"%s\",\"password\":\"%s\"}"%(username,password)
+
 
 headers = { 'content-type': "application/json" }
 
@@ -13,4 +16,3 @@ res = conn.getresponse()
 data = res.read()
 
 print(data.decode("utf-8"))
-"""*9 #2 &10 #A $6 &6 #3 #Q #4 $4 *3 $8 *6"""
