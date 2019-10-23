@@ -1,5 +1,5 @@
 # ThirteenWater
-https://img.shields.io/badge/language-python-yellowgreen
+![](https://img.shields.io/badge/language-python-yellowgreen)
 
 # 运行环境
 web端
